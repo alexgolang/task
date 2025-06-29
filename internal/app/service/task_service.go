@@ -27,7 +27,6 @@ func NewTaskService(logger *log.Logger, db *sqlite.Database) *TaskService {
 
 func (s *TaskService) CreateTask(ctx context.Context, task *domain.CreateTaskRequest) (uuid.UUID, error) {
 	if task.Title == "" {
-		s.logger.Printf("create task: title is required")
 		return uuid.UUID{}, fmt.Errorf("create task: title is required")
 	}
 
@@ -43,12 +42,10 @@ func (s *TaskService) CreateTask(ctx context.Context, task *domain.CreateTaskReq
 	}
 
 	if !status.IsValid() {
-		s.logger.Printf("create task: invalid status")
 		return uuid.UUID{}, fmt.Errorf("create task: invalid status")
 	}
 
 	if !priority.IsValid() {
-		s.logger.Printf("create task: invalid priority")
 		return uuid.UUID{}, fmt.Errorf("create task: invalid priority")
 	}
 
@@ -64,7 +61,6 @@ func (s *TaskService) CreateTask(ctx context.Context, task *domain.CreateTaskReq
 	})
 
 	if err != nil {
-		s.logger.Printf("create task: %v", err)
 		return uuid.UUID{}, fmt.Errorf("create task: %w", err)
 	}
 
@@ -74,7 +70,6 @@ func (s *TaskService) CreateTask(ctx context.Context, task *domain.CreateTaskReq
 func (s *TaskService) GetTasks(ctx context.Context) ([]domain.Task, error) {
 	tasks, err := s.db.Queries.GetTasks(ctx)
 	if err != nil {
-		s.logger.Printf("get tasks: %v", err)
 		return nil, fmt.Errorf("get tasks: %w", err)
 	}
 
@@ -88,13 +83,11 @@ func (s *TaskService) GetTasks(ctx context.Context) ([]domain.Task, error) {
 
 func (s *TaskService) GetTask(ctx context.Context, id string) (domain.Task, error) {
 	if id == "" {
-		s.logger.Printf("get task: id is required")
 		return domain.Task{}, fmt.Errorf("get task: id is required")
 	}
 
 	task, err := s.db.Queries.GetTask(ctx, id)
 	if err != nil {
-		s.logger.Printf("get task: %v", err)
 		return domain.Task{}, fmt.Errorf("get task: %w", err)
 	}
 
@@ -103,17 +96,14 @@ func (s *TaskService) GetTask(ctx context.Context, id string) (domain.Task, erro
 
 func (s *TaskService) UpdateTask(ctx context.Context, id string, task *domain.UpdateTaskRequest) error {
 	if id == "" {
-		s.logger.Printf("update task: id is required")
 		return fmt.Errorf("update task: id is required")
 	}
 
 	if task.Status != nil && !task.Status.IsValid() {
-		s.logger.Printf("update task: invalid status")
 		return fmt.Errorf("update task: invalid status")
 	}
 
 	if task.Priority != nil && !task.Priority.IsValid() {
-		s.logger.Printf("update task: invalid priority")
 		return fmt.Errorf("update task: invalid priority")
 	}
 
@@ -147,7 +137,6 @@ func (s *TaskService) UpdateTask(ctx context.Context, id string, task *domain.Up
 	})
 
 	if err != nil {
-		s.logger.Printf("update task: %v", err)
 		return fmt.Errorf("update task: %w", err)
 	}
 
@@ -156,13 +145,11 @@ func (s *TaskService) UpdateTask(ctx context.Context, id string, task *domain.Up
 
 func (s *TaskService) DeleteTask(ctx context.Context, id string) error {
 	if id == "" {
-		s.logger.Printf("delete task: id is required")
 		return fmt.Errorf("delete task: id is required")
 	}
 
 	result, err := s.db.Queries.DeleteTask(ctx, id)
 	if err != nil {
-		s.logger.Printf("delete task: %v", err)
 		return fmt.Errorf("delete task: %w", err)
 	}
 
