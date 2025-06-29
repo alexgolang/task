@@ -85,10 +85,6 @@ Environment variables (see `.env.example`):
 
 ## Security Setup
 
-⚠️ **IMPORTANT**: The certificates in `secret/` are for **development/testing only**.
-
-### For Production:
-
 **1. Generate your own certificates:**
 ```bash
 # Generate private key
