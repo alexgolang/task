@@ -1,0 +1,19 @@
+version: "2"
+sql:
+  - engine: "sqlite"
+    queries: "queries/"
+    schema: "migrations/"
+    gen:
+      go:
+        package: "sqlc"
+        out: "sqlc"
+        emit_json_tags: true
+        emit_prepared_queries: false
+        emit_interface: true
+        emit_exact_table_names: false
+        emit_empty_slices: true
+        overrides:
+          - column: "tasks.status"
+            go_type: "github.com/alexgolang/ishare-task/internal/app/domain.TaskStatus"
+          - column: "tasks.priority"
+            go_type: "github.com/alexgolang/ishare-task/internal/app/domain.TaskPriority"
