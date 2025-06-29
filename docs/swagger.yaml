@@ -1,0 +1,232 @@
+basePath: /
+definitions:
+  domain.CreateTaskRequest:
+    description: Request body for creating a new task
+    properties:
+      description:
+        type: string
+      priority:
+        $ref: '#/definitions/domain.TaskPriority'
+      status:
+        $ref: '#/definitions/domain.TaskStatus'
+      title:
+        type: string
+    required:
+    - title
+    type: object
+  domain.Task:
+    description: Task object with all details
+    properties:
+      created_at:
+        type: string
+      description:
+        type: string
+      id:
+        type: string
+      priority:
+        $ref: '#/definitions/domain.TaskPriority'
+      status:
+        $ref: '#/definitions/domain.TaskStatus'
+      title:
+        type: string
+      updated_at:
+        type: string
+    type: object
+  domain.TaskPriority:
+    enum:
+    - low
+    - medium
+    - high
+    type: string
+    x-enum-varnames:
+    - TaskPriorityLow
+    - TaskPriorityMedium
+    - TaskPriorityHigh
+  domain.TaskStatus:
+    enum:
+    - to_do
+    - in_progress
+    - done
+    type: string
+    x-enum-varnames:
+    - TaskStatusToDo
+    - TaskStatusInProgress
+    - TaskStatusDone
+  domain.UpdateTaskRequest:
+    description: Request body for updating a task (all fields optional)
+    properties:
+      description:
+        type: string
+      priority:
+        $ref: '#/definitions/domain.TaskPriority'
+      status:
+        $ref: '#/definitions/domain.TaskStatus'
+      title:
+        type: string
+    type: object
+  server.ErrorResponse:
+    properties:
+      error:
+        type: string
+      message:
+        type: string
+    type: object
+host: localhost:8080
+info:
+  contact: {}
+  description: A REST API for task management with CRUD operations
+  title: Task Management API
+  version: "1.0"
+paths:
+  /tasks:
+    get:
+      consumes:
+      - application/json
+      description: Get all tasks in the system
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: List of tasks
+          schema:
+            items:
+              $ref: '#/definitions/domain.Task'
+            type: array
+        "500":
+          description: Internal server error
+          schema:
+            $ref: '#/definitions/server.ErrorResponse'
+      summary: List all tasks
+      tags:
+      - tasks
+    post:
+      consumes:
+      - application/json
+      description: Create a new task with title, description, status, and priority
+      parameters:
+      - description: Task data
+        in: body
+        name: task
+        required: true
+        schema:
+          $ref: '#/definitions/domain.CreateTaskRequest'
+      produces:
+      - application/json
+      responses:
+        "201":
+          description: Task created successfully
+          schema:
+            additionalProperties:
+              type: string
+            type: object
+        "400":
+          description: Bad request
+          schema:
+            $ref: '#/definitions/server.ErrorResponse'
+        "500":
+          description: Internal server error
+          schema:
+            $ref: '#/definitions/server.ErrorResponse'
+      summary: Create a new task
+      tags:
+      - tasks
+  /tasks/{id}:
+    delete:
+      consumes:
+      - application/json
+      description: Delete a task by its UUID
+      parameters:
+      - description: Task ID (UUID)
+        in: path
+        name: id
+        required: true
+        type: string
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: Task deleted successfully
+          schema:
+            additionalProperties:
+              type: string
+            type: object
+        "404":
+          description: Task not found
+          schema:
+            $ref: '#/definitions/server.ErrorResponse'
+        "500":
+          description: Internal server error
+          schema:
+            $ref: '#/definitions/server.ErrorResponse'
+      summary: Delete task
+      tags:
+      - tasks
+    get:
+      consumes:
+      - application/json
+      description: Get a single task by its UUID
+      parameters:
+      - description: Task ID (UUID)
+        in: path
+        name: id
+        required: true
+        type: string
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: Task found
+          schema:
+            $ref: '#/definitions/domain.Task'
+        "404":
+          description: Task not found
+          schema:
+            $ref: '#/definitions/server.ErrorResponse'
+        "500":
+          description: Internal server error
+          schema:
+            $ref: '#/definitions/server.ErrorResponse'
+      summary: Get task by ID
+      tags:
+      - tasks
+    patch:
+      consumes:
+      - application/json
+      description: Update a task's fields (partial update supported)
+      parameters:
+      - description: Task ID (UUID)
+        in: path
+        name: id
+        required: true
+        type: string
+      - description: Task update data
+        in: body
+        name: task
+        required: true
+        schema:
+          $ref: '#/definitions/domain.UpdateTaskRequest'
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: Task updated successfully
+          schema:
+            additionalProperties:
+              type: string
+            type: object
+        "400":
+          description: Bad request
+          schema:
+            $ref: '#/definitions/server.ErrorResponse'
+        "404":
+          description: Task not found
+          schema:
+            $ref: '#/definitions/server.ErrorResponse'
+        "500":
+          description: Internal server error
+          schema:
+            $ref: '#/definitions/server.ErrorResponse'
+      summary: Update task
+      tags:
+      - tasks
+swagger: "2.0"
